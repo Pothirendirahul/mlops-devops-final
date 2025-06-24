@@ -1,0 +1,39 @@
+services:
+  yolo-backend:
+    build:
+      context: ./yolo-v5-flask-app
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5005"
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - mlops-network
+
+  depth-backend:
+    build:
+      context: ./depth-anything-flask-app
+      dockerfile: Dockerfile
+    ports:
+      - "5050:5050"
+    environment:
+      - FLASK_ENV=development
+      - PYTORCH_ENABLE_MPS_FALLBACK=1
+    networks:
+      - mlops-network
+
+  frontend:
+    build:
+      context: ./object-detection-react-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - yolo-backend
+      - depth-backend
+    networks:
+      - mlops-network
+
+networks:
+  mlops-network:
+    driver: bridge
