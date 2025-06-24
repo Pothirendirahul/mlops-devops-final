@@ -1,0 +1,41 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: us-east-1
+    AWS_ACCOUNT_ID: 339712816083
+    IMAGE_REPO_NAME_FRONTEND: mlops/frontend
+    IMAGE_REPO_NAME_YOLO: mlops/yolo-backend  
+    IMAGE_REPO_NAME_DEPTH: mlops/depth-backend
+    IMAGE_TAG: latest
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker images...
+      
+      # Build frontend
+      - docker build -t $IMAGE_REPO_NAME_FRONTEND:$IMAGE_TAG ./object-detection-react-app
+      - docker tag $IMAGE_REPO_NAME_FRONTEND:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME_FRONTEND:$IMAGE_TAG
+      
+      # Build yolo backend  
+      - docker build -t $IMAGE_REPO_NAME_YOLO:$IMAGE_TAG ./yolo-v5-flask-app
+      - docker tag $IMAGE_REPO_NAME_YOLO:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME_YOLO:$IMAGE_TAG
+      
+      # Build depth backend
+      - docker build -t $IMAGE_REPO_NAME_DEPTH:$IMAGE_TAG ./depth-anything-flask-app  
+      - docker tag $IMAGE_REPO_NAME_DEPTH:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME_DEPTH:$IMAGE_TAG
+      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME_FRONTEND:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME_YOLO:$IMAGE_TAG  
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME_DEPTH:$IMAGE_TAG
