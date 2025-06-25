@@ -154,10 +154,4 @@ Also delete ECR repositories and CodeBuild projects if no longer needed.
 * Project for CSYE 7220 DevOps, Prof. Dino Konstantopoulos
 * Based on `object-detection-react-app`, `yolo-v5-flask-app`, `depth-anything-flask-app`
 
-## Contact
 
-For issues, please open a GitHub issue or contact the project maintainer.
-
-> Ready for demo! Test deployment by uploading images to the frontend and verifying object detection and depth estimation results.
-
-*Replace `<ALB_DNS>` and `yourusername/your-repo` with your actual values.*
