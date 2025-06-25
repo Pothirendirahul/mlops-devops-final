@@ -99,20 +99,9 @@ This will provision:
    * **Service Role:** New or existing with ECR and ECS permissions.
    * **Environment variables:** As defined in `buildspec.yml`.
 3. Use the provided `buildspec.yml` for build instructions.
-4. Enable webhook to trigger builds on GitHub pushes.
 
-### 6. Update `buildspec.yml` with ALB URLs
 
-After Terraform, edit these lines in `buildspec.yml`:
-
-```yaml
-REACT_APP_YOLO_API_URL: http://<ALB_DNS>/detect
-REACT_APP_DEPTH_API_URL: http://<ALB_DNS>/predict_depth
-```
-
-Commit and push to GitHub to trigger a new build.
-
-### 7. Verify ECS and ALB
+### 6. Verify ECS and ALB
 
 * **ECS console:** Confirm all three services are running and healthy.
 * **EC2 console (Target Groups):** Ensure at least one healthy target per group.
